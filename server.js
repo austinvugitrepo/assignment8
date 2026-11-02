@@ -34,6 +34,16 @@ app.post('/items', (req, res) => {
   res.status(201).json(newItem);
 });
 
+app.put('/items/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const item = items.find(i => i.id === id);
+  if (!item) {
+    return res.status(404).json({ error: `Item ${id} not found` });
+  }
+  Object.assign(item, req.body, { id });
+  res.status(200).json(item);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
