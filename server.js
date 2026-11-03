@@ -44,8 +44,17 @@ app.put('/items/:id', (req, res) => {
   res.status(200).json(item);
 });
 
+app.delete('/items/:id', (req, res) => {
+  const id = Number(req.params.id);
+  const index = items.findIndex(i => i.id === id);
+  if (index === -1) {
+    return res.status(404).json({ error: `Item ${id} not found` });
+  }
+  const [deleted] = items.splice(index, 1);
+  res.status(200).json(deleted);
+});
+
 app.listen(PORT, () => {
   console.log(`Server running on http://localhost:${PORT}`);
 });
-
 
