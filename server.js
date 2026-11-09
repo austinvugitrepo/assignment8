@@ -15,11 +15,11 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/items', (req, res) => {
+app.get('/api/resources', (req, res) => {
 	res.status(200).json(items);
 });
 
-app.get('/items/:id', (req, res) => {
+app.get('/api/resources/:id', (req, res) => {
   const id = Number(req.params.id);
   const item = items.find(i => i.id === id);
   if (!item) {
@@ -28,13 +28,13 @@ app.get('/items/:id', (req, res) => {
   res.status(200).json(item);
 });
 
-app.post('/items', (req, res) => {
+app.post('/api/resources', (req, res) => {
   const newItem = { id: nextId++, ...req.body };
   items.push(newItem);
   res.status(201).json(newItem);
 });
 
-app.put('/items/:id', (req, res) => {
+app.put('/api/resources/:id', (req, res) => {
   const id = Number(req.params.id);
   const item = items.find(i => i.id === id);
   if (!item) {
@@ -44,7 +44,7 @@ app.put('/items/:id', (req, res) => {
   res.status(200).json(item);
 });
 
-app.delete('/items/:id', (req, res) => {
+app.delete('/api/resources/:id', (req, res) => {
   const id = Number(req.params.id);
   const index = items.findIndex(i => i.id === id);
   if (index === -1) {
