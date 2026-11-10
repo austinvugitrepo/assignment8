@@ -88,14 +88,21 @@ app.put('/api/resources/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/resources/:id', (req, res) => {
+app.delete('/api/resources/:id', async (req, res) => {
   const id = Number(req.params.id);
-  const index = items.findIndex(i => i.id === id);
-  if (index === -1) {
-    return res.status(404).json({ error: `Item ${id} not found` });
+  if (!Number.isInteger(id)) {
+    return res.status(400).json({ error: 'id must be an integer' });
   }
-  const [deleted] = items.splice(index, 1);
-  res.status(200).json(deleted);
+  try {
+    const result = await pool.query('DELETE FROM items WHERE id = $1 RETURNING *', [id]);
+    if (result.rows.length === 0) {
+      return res.status(404).json({ error: `Item ${id} not found` });
+    }
+    res.status(200).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 app.listen(PORT, () => {
