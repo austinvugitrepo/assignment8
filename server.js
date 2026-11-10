@@ -11,7 +11,7 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/resources', async (req, res) => {
+app.get('/api/items', async (req, res) => {
   try {
     const result = await pool.query('SELECT * FROM items ORDER BY id');
     res.status(200).json(result.rows);
@@ -21,7 +21,7 @@ app.get('/api/resources', async (req, res) => {
   }
 });
 
-app.get('/api/resources/:id', async (req, res) => {
+app.get('/api/items/:id', async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) {
     return res.status(400).json({ error: 'id must be an integer' });
@@ -38,7 +38,7 @@ app.get('/api/resources/:id', async (req, res) => {
   }
 });
 
-app.post('/api/resources', async (req, res) => {
+app.post('/api/items', async (req, res) => {
   const { name, price } = req.body ?? {};
   if (typeof name !== 'string' || name.trim() === '') {
     return res.status(400).json({ error: 'name is required and must be a non-empty string' });
@@ -58,7 +58,7 @@ app.post('/api/resources', async (req, res) => {
   }
 });
 
-app.put('/api/resources/:id', async (req, res) => {
+app.put('/api/items/:id', async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) {
     return res.status(400).json({ error: 'id must be an integer' });
@@ -88,7 +88,7 @@ app.put('/api/resources/:id', async (req, res) => {
   }
 });
 
-app.delete('/api/resources/:id', async (req, res) => {
+app.delete('/api/items/:id', async (req, res) => {
   const id = Number(req.params.id);
   if (!Number.isInteger(id)) {
     return res.status(400).json({ error: 'id must be an integer' });
