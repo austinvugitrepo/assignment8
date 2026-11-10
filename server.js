@@ -38,10 +38,24 @@ app.get('/api/resources/:id', async (req, res) => {
   }
 });
 
-app.post('/api/resources', (req, res) => {
-  const newItem = { id: nextId++, ...req.body };
-  items.push(newItem);
-  res.status(201).json(newItem);
+app.post('/api/resources', async (req, res) => {
+  const { name, price } = req.body ?? {};
+  if (typeof name !== 'string' || name.trim() === '') {
+    return res.status(400).json({ error: 'name is required and must be a non-empty string' });
+  }
+  if (typeof price !== 'number' || !Number.isFinite(price) || price < 0) {
+    return res.status(400).json({ error: 'price is required and must be a number >= 0' });
+  }
+  try {
+    const result = await pool.query(
+      'INSERT INTO items (name, price) VALUES ($1, $2) RETURNING *',
+      [name.trim(), price]
+    );
+    res.status(201).json(result.rows[0]);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 app.put('/api/resources/:id', (req, res) => {
