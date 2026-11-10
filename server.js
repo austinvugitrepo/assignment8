@@ -2,11 +2,7 @@ const express = require('express');
 const app = express();
 const PORT = 3000;
 
-let items = [
-	{id: 1, name: 'Laptop', price: 999 },
-	{id: 2, name: 'Mouse', price: 25 },
-];
-let nextId = 3;
+const pool = require('./db');
 
 app.use(express.json());
 
@@ -15,8 +11,14 @@ app.use((req, res, next) => {
   next();
 });
 
-app.get('/api/resources', (req, res) => {
-	res.status(200).json(items);
+app.get('/api/resources', async (req, res) => {
+  try {
+    const result = await pool.query('SELECT * FROM items ORDER BY id');
+    res.status(200).json(result.rows);
+  } catch (err) {
+    console.error(err);
+    res.status(500).json({ error: 'Database error' });
+  }
 });
 
 app.get('/api/resources/:id', (req, res) => {
